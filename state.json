@@ -1,7 +1,78 @@
 {
   "version": 3,
   "failStreak": 0,
-  "hours": {},
+  "hours": {
+    "Bellevue Square": [
+      {
+        "storeDays": "Sun",
+        "storeTimings": "11:00 AM-7:00 PM"
+      },
+      {
+        "storeDays": "Mon-Sat",
+        "storeTimings": "10:00 AM-9:00 PM"
+      }
+    ],
+    "Alderwood": [
+      {
+        "storeDays": "Sun",
+        "storeTimings": "11:00 AM-7:00 PM"
+      },
+      {
+        "storeDays": "Mon-Sat",
+        "storeTimings": "10:00 AM-8:00 PM"
+      }
+    ],
+    "University Village": [
+      {
+        "storeDays": "Mon-Sat",
+        "storeTimings": "10:00 AM-8:00 PM"
+      },
+      {
+        "storeDays": "Sun",
+        "storeTimings": "11:00 AM-6:00 PM"
+      }
+    ],
+    "River Park Square": [
+      {
+        "storeDays": "Sun",
+        "storeTimings": "11:00 AM-6:00 PM"
+      },
+      {
+        "storeDays": "Mon-Sat",
+        "storeTimings": "10:00 AM-7:00 PM"
+      }
+    ],
+    "Tacoma Mall": [
+      {
+        "storeDays": "Mon-Sat",
+        "storeTimings": "10:00 AM-8:00 PM"
+      },
+      {
+        "storeDays": "Sun",
+        "storeTimings": "11:00 AM-6:00 PM"
+      }
+    ],
+    "Southcenter": [
+      {
+        "storeDays": "Sun",
+        "storeTimings": "11:00 AM-7:00 PM"
+      },
+      {
+        "storeDays": "Mon-Sat",
+        "storeTimings": "10:00 AM-9:00 PM"
+      }
+    ],
+    "Pioneer Place": [
+      {
+        "storeDays": "Sun",
+        "storeTimings": "11:00 AM-6:00 PM"
+      },
+      {
+        "storeDays": "Mon-Sat",
+        "storeTimings": "10:00 AM-7:00 PM"
+      }
+    ]
+  },
   "restocks": [],
   "pending": {}
 }
