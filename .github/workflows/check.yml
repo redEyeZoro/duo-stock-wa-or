@@ -1,0 +1,62 @@
+name: Check iPhone Duo stock
+
+on:
+  schedule:
+    - cron: "*/5 * * * *"   # GitHub treats this as "about every 5 min", often slower
+  workflow_dispatch:          # lets you hit "Run workflow" by hand
+
+# Each job asks for only what it needs. There are no pull_request triggers,
+# so nobody else's fork can run this or see the NTFY_TOPIC secret.
+permissions: {}
+
+# One run at a time, so a run never works from state.json older than the
+# last run's.
+concurrency:
+  group: duo-check
+  cancel-in-progress: false
+
+# Actions are pinned to commit SHAs (tag in the comment) so a moved tag can't
+# change what runs here.
+jobs:
+  check:
+    runs-on: ubuntu-latest
+    timeout-minutes: 3
+    permissions:
+      contents: write   # update state.json through the API
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+
+      - uses: actions/setup-node@949feb2413d6458794dcd2491c4babbbce0c15c1 # v7.1.0
+        with:
+          node-version: 24
+
+      - name: Check stock
+        env:
+          NTFY_TOPIC: ${{ secrets.NTFY_TOPIC }}
+          GITHUB_TOKEN: ${{ github.token }}
+        run: node check.js
+
+      # The run stays red when the check fails, but its error banner still gets published.
+      - name: Build page
+        if: ${{ !cancelled() && hashFiles('status.json') != '' }}
+        run: mkdir _site && cp index.html status.json _site/
+
+      - if: ${{ !cancelled() && hashFiles('status.json') != '' }}
+        uses: actions/upload-pages-artifact@fc324d3547104276b827a68afc52ff2a11cc49c9 # v5.0.0
+        with:
+          path: _site
+
+  deploy:
+    needs: check
+    if: ${{ !cancelled() }}
+    runs-on: ubuntu-latest
+    timeout-minutes: 10   # deploy-pages waits up to 10 min for Pages itself
+    permissions:
+      pages: write      # publish the page
+      id-token: write   # lets deploy-pages prove the request comes from this workflow
+    environment:
+      name: github-pages
+      url: ${{ steps.deploy.outputs.page_url }}
+    steps:
+      - id: deploy
+        uses: actions/deploy-pages@368f82528645a54fb793d4d04e342629a3f51346 # v5.0.1
