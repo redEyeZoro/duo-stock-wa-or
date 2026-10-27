@@ -2,7 +2,7 @@ name: Check iPhone Duo stock
 
 on:
   schedule:
-    - cron: "*/5 * * * *"   # GitHub treats this as "about every 5 min", often slower
+    - cron: "2,7,12,17,22,27,32,37,42,47,52,57 * * * *"     # GitHub treats this as "about every 5 min", often slower
   workflow_dispatch:          # lets you hit "Run workflow" by hand
 
 # Each job asks for only what it needs. There are no pull_request triggers,
