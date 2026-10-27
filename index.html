@@ -1,0 +1,240 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Duo Stock</title>
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Crect x='8' y='2' width='16' height='28' rx='4' fill='%231f8a4c'/%3E%3C/svg%3E">
+<style>
+  :root { --bg:#f6f6f4; --card:#fff; --text:#1a1a1a; --muted:#777; --line:#e4e4e0; --yes:#1f8a4c; --yesbg:#e3f4ea; --no:#999;
+          --bad:#b42318; --badbg:#fdecea; --warn:#8a5a00; --warnbg:#fdf3dc;
+          --h0:#f0efec; --f0:#777; --h1:#86b6ef; --f1:#1a1a1a; --h2:#3987e5; --f2:#1a1a1a; --h3:#1c5cab; --f3:#fff; --h4:#0d366b; --f4:#fff; }
+  @media (prefers-color-scheme: dark) {
+    :root { --bg:#111; --card:#1b1b1b; --text:#eee; --muted:#999; --line:#2a2a2a; --yes:#4fd18b; --yesbg:#16301f; --no:#666;
+            --bad:#ff8a80; --badbg:#3a1714; --warn:#f5c26b; --warnbg:#33270f;
+            --h0:#383835; --f0:#999; --h1:#184f95; --f1:#eee; --h2:#256abf; --f2:#eee; --h3:#3987e5; --f3:#eee; --h4:#86b6ef; --f4:#111; }
+  }
+  * { box-sizing: border-box; }
+  body { margin:0; background:var(--bg); color:var(--text); font:16px/1.4 -apple-system, BlinkMacSystemFont, "SF Pro Text", system-ui, sans-serif; }
+  main { max-width:640px; margin:0 auto; padding:32px 16px; }
+  h1 { font-size:22px; margin:0 0 4px; }
+  .sub { color:var(--muted); font-size:14px; margin-bottom:20px; }
+  .banner { padding:14px 16px; border-radius:12px; margin-bottom:16px; font-weight:600; background:var(--card); border:1px solid var(--line); text-wrap:pretty; }
+  .banner.yes { background:var(--yesbg); color:var(--yes); border-color:transparent; }
+  .banner.bad { background:var(--badbg); color:var(--bad); border-color:transparent; }
+  .banner.warn { background:var(--warnbg); color:var(--warn); border-color:transparent; }
+  .banner small { display:block; font-weight:400; font-size:14px; margin-top:2px; }
+  table { width:100%; table-layout:fixed; border-collapse:separate; border-spacing:0; background:var(--card); border:1px solid var(--line); border-radius:12px; overflow:hidden; }
+  th, td { padding:10px 4px; border-top:1px solid var(--line); text-align:center; font-size:13px; }
+  thead th { border-top:0; vertical-align:bottom; font-weight:600; line-height:1.25; }
+  thead th span { display:block; color:var(--muted); font-weight:400; font-size:12px; }
+  th a { color:inherit; text-decoration:none; }
+  th a:hover { text-decoration:underline; }
+  th:first-child, td:first-child { width:36%; text-align:left; padding-left:14px; }
+  .store { font-size:15px; }
+  .city { color:var(--muted); font-size:12px; overflow:hidden; }
+  /* "City · 10 mi": every part starts with a dot, and the dot that would start a line is clipped */
+  .city > div { display:flex; flex-wrap:wrap; margin-left:-1em; }
+  .city span { position:relative; padding-left:1em; }
+  .city span::before { content:"·"; position:absolute; left:0; width:1em; text-align:center; }
+  .in { display:inline-block; padding:2px 9px; border-radius:999px; background:var(--yesbg); color:var(--yes); font-weight:600; }
+  .no, .unk { color:var(--no); }
+  .foot { color:var(--muted); font-size:13px; margin-top:16px; }
+  .seg { display:inline-flex; gap:2px; padding:3px; margin-bottom:16px; background:var(--card); border:1px solid var(--line); border-radius:999px; }
+  .seg a { padding:6px 18px; border-radius:999px; color:var(--muted); font-size:14px; font-weight:600; text-decoration:none; }
+  .seg a[aria-current] { background:var(--text); color:var(--bg); }
+  [hidden] { display:none !important; }
+  h2 { font-size:14px; margin:22px 0 8px; }
+  .basis { color:var(--muted); font-size:13px; margin:-8px 0 0; }
+  .heat th:first-child, .heat td:first-child { width:28%; padding-left:12px; }
+  .heat th { padding:10px 0; font-size:11px; }
+  .heat td { padding:6px 0; }
+  .heat td:first-child { font-size:13px; text-align:left; }
+  .heat td span { display:block; margin:0 2px; padding:6px 0; border-radius:6px; }
+  .h0 { background:var(--h0); color:var(--f0); } .h1 { background:var(--h1); color:var(--f1); } .h2 { background:var(--h2); color:var(--f2); }
+  .h3 { background:var(--h3); color:var(--f3); } .h4 { background:var(--h4); color:var(--f4); }
+  .heat .tot { font-weight:600; }
+  .entry { background:var(--card); border:1px solid var(--line); border-radius:12px; padding:12px 14px; margin-bottom:8px; }
+  .entry .top { display:flex; justify-content:space-between; align-items:baseline; gap:8px; }
+  .nw { white-space:nowrap; }
+  .entry .when, .entry .meta { color:var(--muted); font-size:13px; }
+  .entry .open { color:var(--yes); font-weight:600; }
+  .bar { height:6px; margin-top:8px; border-radius:3px; background:var(--h2); }
+  .more { width:100%; padding:10px; border:1px solid var(--line); border-radius:12px; background:var(--card); color:var(--text); font:inherit; font-size:14px; }
+  @media (max-width:420px) {
+    th:first-child, td:first-child { width:60%; padding-left:12px; }
+    .store { font-size:14px; }
+    .heat th:first-child, .heat td:first-child { width:28%; }
+  }
+</style>
+</head>
+<body>
+<main>
+  <h1>iPhone Duo pickup stock</h1>
+  <div class="sub" id="checked">Loading…</div>
+  <nav class="seg"><a href="#" id="tab-now">Now</a><a href="#history" id="tab-history">History</a></nav>
+  <div id="now">
+    <div id="banners"></div>
+    <table id="grid" hidden>
+      <thead><tr id="head"></tr></thead>
+      <tbody id="rows"></tbody>
+    </table>
+    <div class="foot">
+      Checks run on GitHub about every 5 minutes. Push alerts go out through ntfy.
+      The model name links to its buy page. Distances are from Bellevue ZIP 98004.
+    </div>
+  </div>
+  <div id="hist" hidden></div>
+</main>
+<script>
+const STALE_MIN = 30; // the schedule is "every 5 min", but GitHub often runs it late
+
+// Apple's text ends up in innerHTML, so escape it.
+const esc = (s) => String(s).replace(/[&<>"']/g, (c) => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;" })[c]);
+
+function ago(iso) {
+  const m = Math.round((Date.now() - new Date(iso)) / 60000);
+  return m < 1 ? "just now" : m < 60 ? m + " min ago" : Math.round(m / 60) + " hr ago";
+}
+
+const banner = (cls, text, small) =>
+  `<div class="banner ${cls}">${esc(text)}${small ? `<small>${esc(small)}</small>` : ""}</div>`;
+
+// Missing when GitHub itself failed, so the record (and its streak) was never read.
+function streakNote(n) {
+  if (typeof n !== "number") return "";
+  return " " + (n >= 6 ? "6+ failures in a row, so you got a push about it." : `${n} failure${n === 1 ? "" : "s"} in a row.`);
+}
+
+function cell(c) {
+  if (!c) return `<td class="unk" title="Unknown">?</td>`;
+  return c.available
+    ? `<td title="${esc(c.quote)}"><span class="in">Yes</span></td>`
+    : `<td class="no" title="${esc(c.quote)}">No</td>`;
+}
+
+let last; // last status.json that loaded, kept on screen if a refresh fails
+
+async function load() {
+  try {
+    const s = await (await fetch("status.json?t=" + Date.now())).json();
+    render(s, "");
+    last = s;
+  } catch {
+    if (last) render(last, " · couldn't refresh, retrying");
+    else document.getElementById("checked").textContent = "No results yet. Run the workflow once.";
+  }
+}
+
+function render(s, note) {
+  const minutes = (Date.now() - new Date(s.checkedAt)) / 60000;
+  document.getElementById("checked").textContent =
+    "Last check " + ago(s.checkedAt) + " (" + new Date(s.checkedAt).toLocaleString([], { weekday: "short", hour: "numeric", minute: "2-digit" }) + ")" + note;
+
+  const hits = [];
+  for (const m of s.models) for (const r of s.stores) if (r.parts[m.part]?.available) hits.push(`${m.name} at ${r.name}`);
+  let html = "";
+  if (!s.ok) {
+    html += banner("bad", "Last check failed: " + (s.error || "unknown error"),
+      "Stock below is unknown until a check succeeds." + streakNote(s.failStreak));
+  }
+  if (minutes > STALE_MIN) {
+    html += banner("warn", "Checker looks stalled",
+      `No check in over ${STALE_MIN} min. GitHub may be running the schedule late, or it stopped. Look at the Actions tab.`);
+  }
+  const missing = s.stores.filter((r) => s.models.some((m) => r.parts[m.part] == null));
+  if (s.ok && missing.length) {
+    html += banner("warn", `Partial results: ${s.stores.length - missing.length} of ${s.stores.length} stores checked`,
+      "Stock unknown at " + missing.map((r) => r.name).join(", ") + ".");
+  }
+  if (s.ok) {
+    const stale = minutes > STALE_MIN;
+    html += hits.length
+      ? banner(stale ? "warn" : "yes", (stale ? "Previously available: " : "In stock: ") + hits.join("; "))
+      : banner("", missing.length ? "No availability confirmed in the returned results"
+        : stale ? "No stock was available at the last check" : "Not in stock anywhere you're watching");
+  }
+  document.getElementById("banners").innerHTML = html;
+
+  document.getElementById("head").innerHTML = "<th>Store</th>" + s.models.map((m) => {
+    const [size, ...color] = m.name.split(" ");
+    return `<th><a href="${esc(m.buy)}">${esc(size)}<span>${esc(color.join(" "))}</span></a></th>`;
+  }).join("");
+  document.getElementById("rows").innerHTML = s.stores.map((r) => {
+    const where = !s.ok ? [r.city] : r.found ? [r.city, r.miles && Math.round(r.miles) + " mi"] : ["Not in Apple's list this time"];
+    const parts = where.filter(Boolean).map((p) => `<span>${esc(p)}</span>`).join("");
+    return `<tr><td><div class="store">${esc(r.name)}</div><div class="city"><div>${parts}</div></div></td>` +
+      s.models.map((m) => cell(r.parts[m.part])).join("") + "</tr>";
+  }).join("");
+  document.getElementById("grid").hidden = false;
+  renderHistory(s.history);
+  showTab();
+}
+
+const WINDOWS = ["12-6a", "6-9a", "9a-12", "12-5p", "5p-12"];
+const SHOWN = 10;
+let showAll = false;
+let shownHistory; // kept so "Show older" can redraw without waiting for a refresh
+
+const level = (n, max) => (n === 0 ? 0 : Math.ceil((4 * n) / max));
+
+function heatmap(grid) {
+  const max = Math.max(...grid.flatMap((g) => g.counts));
+  const head = "<tr><th>Store</th>" + WINDOWS.map((w) => `<th>${w}</th>`).join("") + "<th>All</th></tr>";
+  const rows = grid.map((g) => "<tr><td>" + esc(g.store) + "</td>" + g.counts.map((n, i) =>
+    `<td><span class="h${level(n, max)}" title="${esc(`${g.store}, ${WINDOWS[i]}: ${n} restock${n === 1 ? "" : "s"}`)}">${n}</span></td>`).join("") +
+    `<td class="tot">${g.total}</td></tr>`).join("");
+  return `<table class="heat"><thead>${head}</thead><tbody>${rows}</tbody></table>`;
+}
+
+function entry(e, longest) {
+  const lasted = e.open ? `<span class="open">${esc(e.lasted)}</span>` : esc(e.lasted);
+  const lastedHtml = `<span class="nw">${lasted}</span>`;
+  const bar = e.open ? "" : `<div class="bar" style="width:max(4px,${longest ? (100 * e.minutes) / longest : 0}%)"></div>`;
+  return `<div class="entry"><div class="top"><b>${esc(e.store)}</b><span class="when">${esc(e.when)}</span></div>` +
+    `<div class="meta">${esc(e.models)} · ${lastedHtml}</div>${bar}</div>`;
+}
+
+function renderHistory(h) {
+  shownHistory = h;
+  let html;
+  if (!h) {
+    html = banner("", "History isn't available right now", "It couldn't be loaded on the last check and will be back after a good check.");
+  } else {
+    html = h.best ? banner("yes", h.best.title, h.best.detail) : banner("", h.learning);
+    if (h.basis) html += `<p class="basis">${esc(h.basis)}</p>`;
+    if (h.count) html += "<h2>Restocks by time of day</h2>" + heatmap(h.grid) + "<h2>Every restock, newest first</h2>" + logCards(h.log);
+    html += '<div class="foot">Counts are restocks seen, not phones. Apple doesn\'t say how many a store has.</div>';
+  }
+  document.getElementById("hist").innerHTML = html;
+}
+
+function logCards(log) {
+  const longest = Math.max(0, ...log.filter((e) => !e.open).map((e) => e.minutes));
+  const hidden = showAll ? 0 : Math.max(0, log.length - SHOWN);
+  const more = hidden ? `<button class="more" id="more">Show ${hidden} older</button>` : "";
+  return log.slice(0, log.length - hidden).map((e) => entry(e, longest)).join("") + more;
+}
+
+// The tab follows the URL hash so the back button works.
+function showTab() {
+  const onHistory = location.hash === "#history";
+  document.getElementById("now").hidden = onHistory;
+  document.getElementById("hist").hidden = !onHistory;
+  for (const [id, on] of [["tab-now", !onHistory], ["tab-history", onHistory]]) {
+    const a = document.getElementById(id);
+    if (on) a.setAttribute("aria-current", "page"); else a.removeAttribute("aria-current");
+  }
+}
+addEventListener("hashchange", showTab);
+document.getElementById("hist").addEventListener("click", (e) => {
+  if (e.target.id !== "more") return;
+  showAll = true;
+  renderHistory(shownHistory);
+});
+showTab();
+load();
+setInterval(load, 60000);
+</script>
+</body>
+</html>

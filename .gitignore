@@ -1,0 +1,7 @@
+.env
+.env.*
+CLAUDE.local.md
+.DS_Store
+# rebuilt every run and published straight to Pages
+status.json
+_site/
