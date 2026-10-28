@@ -73,6 +73,24 @@
       }
     ]
   },
-  "restocks": [],
-  "pending": {}
+  "restocks": [
+    {
+      "store": "Tacoma Mall",
+      "parts": {
+        "MK1F4LL/A": {
+          "in": "2026-10-28T08:30:20.347Z",
+          "out": null
+        }
+      }
+    }
+  ],
+  "pending": {
+    "Tacoma Mall|MK1F4LL/A": {
+      "store": "Tacoma Mall",
+      "part": "MK1F4LL/A",
+      "prevOut": null,
+      "token": "428ad573-c691-423a-8f91-5746640d5c10",
+      "leaseUntil": 1793176400347
+    }
+  }
 }
