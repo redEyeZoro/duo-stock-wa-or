@@ -109,6 +109,15 @@
           "out": "2026-10-29T04:20:14.182Z"
         }
       }
+    },
+    {
+      "store": "Pioneer Place",
+      "parts": {
+        "MK1F4LL/A": {
+          "in": "2026-10-29T05:25:12.559Z",
+          "out": null
+        }
+      }
     }
   ],
   "pending": {
@@ -118,6 +127,13 @@
       "prevOut": null,
       "token": "",
       "leaseUntil": 0
+    },
+    "Pioneer Place|MK1F4LL/A": {
+      "store": "Pioneer Place",
+      "part": "MK1F4LL/A",
+      "prevOut": null,
+      "token": "3f29667a-500e-4f97-b8d6-c53b14483bc9",
+      "leaseUntil": 1793251692559
     }
   }
 }
