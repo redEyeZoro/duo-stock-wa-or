@@ -100,13 +100,6 @@
       "prevOut": null,
       "token": "",
       "leaseUntil": 0
-    },
-    "Pioneer Place|MK1F4LL/A": {
-      "store": "Pioneer Place",
-      "part": "MK1F4LL/A",
-      "prevOut": null,
-      "token": "82407e03-f520-49f9-a382-ad7246fb4a75",
-      "leaseUntil": 1793239996408
     }
   }
 }
